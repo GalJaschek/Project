@@ -1,0 +1,49 @@
+from treelib import Node, Tree
+
+class K_mer_data():
+    def __init__(self, num_apperiacnces: int, indexes_list: list):
+        self.num_apperiacnces = num_apperiacnces
+        self.indexes_list = indexes_list
+
+GENOME = 'AAATTTAAATT'
+ALPHA_BETA = ['A', 'C', 'G', 'T']
+# ALPHA_BETA = ['A', 'C', 'G', '1', 'W', 'V', 'P']
+TREE_DEPTH = 3
+
+tree = Tree()
+
+tree.create_node("", "", data=K_mer_data(0, []))
+
+for depth_layer in range(TREE_DEPTH):
+    for leave in tree.leaves():
+        for char in ALPHA_BETA:
+            parent_tag = leave._tag
+            tree.create_node(f'{parent_tag}{char}', f'{parent_tag}{char}', parent=leave, data=K_mer_data(0, []))
+
+tree.show()
+
+def calc_ancestors(node: Node, tree: Tree):
+    ancestors = []
+    while not node.is_root():
+        pred = node._predecessor
+        for pid in pred:
+            pred = tree.get_node(pred[pid])
+        ancestors.append(pred)
+        node = pred
+    return ancestors
+
+for k_mer_first_index in range(0, len(GENOME) - TREE_DEPTH +1):
+    k_mer = GENOME[k_mer_first_index: k_mer_first_index + TREE_DEPTH]
+    for k in range(1, TREE_DEPTH+1):
+        k_mer_node = tree.get_node(k_mer[0:k])
+        k_mer_node.data.num_apperiacnces += 1
+        parents = calc_ancestors(k_mer_node, tree)
+#adding the missing count at the last k-mer:
+for current_depth in range(1, TREE_DEPTH):
+    last_k_minus_one_mer = GENOME[-current_depth:]
+    for z in range(1, current_depth+1):
+        last_k_mer_node = tree.get_node(last_k_minus_one_mer[0:z])
+        last_k_mer_node.data.num_apperiacnces += 1
+        parents = calc_ancestors(last_k_mer_node, tree)
+
+tree.show(data_property="num_apperiacnces")
