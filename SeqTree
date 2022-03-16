@@ -43,7 +43,7 @@ for current_depth in range(len(GENOME)-TREE_DEPTH+1, len(GENOME)):
             k_mer_node.data.num_apperiacnces += 1
             k_mer_node.data.indexes_list.append((current_depth, current_depth + z-1))
 
-def frequncies_lst(TREE_DEPTH, tree):
+def frequencies_lst(TREE_DEPTH, tree):
     freq_lst = []
     for i in range(TREE_DEPTH):
         freq_lst.append([])
@@ -57,4 +57,4 @@ def frequncies_lst(TREE_DEPTH, tree):
 
 tree.show()
 tree.show(data_property="num_apperiacnces")
-print(frequncies_lst(TREE_DEPTH, tree))
+print(frequencies_lst(TREE_DEPTH, tree))
